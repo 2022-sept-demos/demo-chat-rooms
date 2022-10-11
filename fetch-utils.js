@@ -48,12 +48,29 @@ export async function createRoom(room) {
     return await client.from('rooms').insert(room);
 }
 
-export async function addFavoriteRoom(roomId) {
-    return await client.from('room_favorites').upsert({ room_id: roomId }).single();
+export async function addFavoriteRoom(roomId, userId) {
+    return await client
+        .from('room_favorites')
+        .upsert({ room_id: roomId, user_id: userId })
+        .single();
 }
 
-export async function removeFavoriteRoom(roomId) {
-    return await client.from('room_favorites').delete().eq('room_id', roomId).single();
+export async function removeFavoriteRoom(roomId, userId) {
+    return await client
+        .from('room_favorites')
+        .delete()
+        .match({ room_id: roomId, user_id: userId })
+        .single();
+}
+
+export function onRoomFavorite(handleFavorite, handleUnfavorite) {
+    client
+        // what table and what rows are we interested in?
+        .from(`room_favorites`)
+        // what type of changes are we interested in?
+        .on('INSERT', handleFavorite)
+        .on('DELETE', handleUnfavorite)
+        .subscribe();
 }
 
 export async function getCategories() {

@@ -1,7 +1,13 @@
 /* Imports */
 // this will check if we have a user and set signout link if it exists
 import './auth/user.js';
-import { addFavoriteRoom, getRooms, getUser, removeFavoriteRoom } from './fetch-utils.js';
+import {
+    addFavoriteRoom,
+    getRooms,
+    getUser,
+    onRoomFavorite,
+    removeFavoriteRoom,
+} from './fetch-utils.js';
 import { renderRoom } from './render-utils.js';
 
 /* Get DOM Elements */
@@ -24,7 +30,44 @@ window.addEventListener('load', async () => {
     if (rooms) {
         displayRooms();
     }
+
+    onRoomFavorite(handleFavorite, handleUnfavorite);
 });
+
+function handleFavorite(payload) {
+    for (const room of rooms) {
+        // is this the room we're looking for?
+        if (room.id === payload.new.room_id) {
+            // add then new favorite and redisplay
+            room.favorites.push(payload.new);
+            displayRooms();
+            // stop looping because we're done
+            break;
+        }
+    }
+}
+
+function handleUnfavorite(payload) {
+    for (const room of rooms) {
+        // if this isn't the room we're looking for, continue looping
+        if (room.id !== payload.old.room_id) {
+            continue;
+        }
+
+        // go throught the favorites of this room
+        for (let i = 0; i < room.favorites.length; i++) {
+            // is this the favorite we're looking for (based on user id of what was deleted)
+            if (room.favorites[i].user_id === payload.old.user_id) {
+                // we use the for...i syntax so we already have the index of the one to remove
+                room.favorites.splice(i, 1);
+                // redisplay
+                displayRooms();
+                // stop looping cause we're done
+                break;
+            }
+        }
+    }
+}
 
 /* Display Functions */
 
@@ -48,27 +91,16 @@ function displayRooms() {
         const favoriteButton = roomEl.querySelector('.favorite-button');
         favoriteButton.addEventListener('click', async () => {
             if (favoriteButton.classList.contains('favorited')) {
-                const response = await removeFavoriteRoom(room.id);
+                const response = await removeFavoriteRoom(room.id, user.id);
                 error = response.error;
                 if (error) {
                     displayError();
-                } else {
-                    for (let i = 0; i < room.favorites.length; i++) {
-                        if (room.favorites[i].user_id === user.id) {
-                            room.favorites.splice(i, 1);
-                            break;
-                        }
-                    }
-                    displayRooms();
                 }
             } else {
-                const response = await addFavoriteRoom(room.id);
+                const response = await addFavoriteRoom(room.id, user.id);
                 error = response.error;
                 if (error) {
                     displayError();
-                } else {
-                    room.favorites.push(response.data);
-                    displayRooms();
                 }
             }
         });
