@@ -26,10 +26,12 @@ export function renderMessage(message) {
 
     const dateSpan = document.createElement('span');
     dateSpan.classList.add('created-date');
-    dateSpan.textContent = new Date(message.created_at).toDateString('en-US', {
+    dateSpan.textContent = new Date(message.created_at).toLocaleString('en-US', {
         day: 'numeric',
-        month: 'short',
-        year: 'short',
+        month: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
     });
 
     const p = document.createElement('p');

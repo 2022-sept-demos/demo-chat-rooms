@@ -27,10 +27,16 @@ main {
     border-bottom: 1px solid var(--placeholder-color);
 }
 
+.avatar {
+    height: 24px;
+    width: 24px;
+}
+
 .info-byline {
     display: flex;
     align-items: center;
     gap: 5px;
+    font-size: 0.7em;
 }
 
 .created-date {
