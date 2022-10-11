@@ -1,7 +1,7 @@
 /* Imports */
 // this will check if we have a user and set signout link if it exists
 import '../auth/user.js';
-import { createMessage, getRoom, getMessage } from '../fetch-utils.js';
+import { createMessage, getRoom, getMessage, onMessage } from '../fetch-utils.js';
 import { renderMessage } from '../render-utils.js';
 
 /* Get DOM Elements */
@@ -41,6 +41,19 @@ window.addEventListener('load', async () => {
         displayRoom();
         displayMessages();
     }
+
+    onMessage(room.id, async (payload) => {
+        const messageId = payload.new.id;
+        const messageResponse = await getMessage(messageId);
+        error = messageResponse.error;
+        if (error) {
+            displayError();
+        } else {
+            const message = messageResponse.data;
+            room.messages.unshift(message);
+            displayMessages();
+        }
+    });
 });
 
 addMessageForm.addEventListener('submit', async (e) => {
@@ -58,15 +71,17 @@ addMessageForm.addEventListener('submit', async (e) => {
         displayError();
     } else {
         addMessageForm.reset();
-        const messageResponse = await getMessage(response.data.id);
-        error = messageResponse.error;
-        if (error) {
-            displayError();
-        } else {
-            const message = messageResponse.data;
-            room.messages.unshift(message);
-            displayMessages();
-        }
+        // This now happens during the onMessage in window load
+        //
+        // const messageResponse = await getMessage(response.data.id);
+        // error = messageResponse.error;
+        // if (error) {
+        //     displayError();
+        // } else {
+        //     const message = messageResponse.data;
+        //     room.messages.unshift(message);
+        //     displayMessages();
+        // }
     }
 });
 

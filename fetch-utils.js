@@ -97,6 +97,15 @@ export async function createMessage(message) {
     return await client.from('messages').insert(message).single();
 }
 
+export function onMessage(roomId, handleMessage) {
+    client
+        // what table and what rows are we interested in?
+        .from(`messages:room_id=eq.${roomId}`)
+        // what type of changes are we interested in?
+        .on('INSERT', handleMessage)
+        .subscribe();
+}
+
 /* Storage Functions */
 
 export async function uploadImage(bucketName, imagePath, imageFile) {
