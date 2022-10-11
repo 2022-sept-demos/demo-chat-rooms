@@ -1,7 +1,7 @@
 /* Imports */
 // this will check if we have a user and set signout link if it exists
 import '../auth/user.js';
-import { createMessage, getRoom } from '../fetch-utils.js';
+import { createMessage, getRoom, getMessage } from '../fetch-utils.js';
 import { renderMessage } from '../render-utils.js';
 
 /* Get DOM Elements */
@@ -53,14 +53,20 @@ addMessageForm.addEventListener('submit', async (e) => {
 
     const response = await createMessage(messageInsert);
     error = response.error;
-    const message = response.data;
 
     if (error) {
         displayError();
     } else {
         addMessageForm.reset();
-        room.messages.unshift(message);
-        displayMessages();
+        const messageResponse = await getMessage(response.data.id);
+        error = messageResponse.error;
+        if (error) {
+            displayError();
+        } else {
+            const message = messageResponse.data;
+            room.messages.unshift(message);
+            displayMessages();
+        }
     }
 });
 

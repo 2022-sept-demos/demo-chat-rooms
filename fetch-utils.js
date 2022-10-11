@@ -62,11 +62,34 @@ export async function getRoom(id) {
         .select(
             `
             *,
-            messages (*)
+            messages (
+                *,
+                user:profiles(
+                    id,
+                    username,
+                    avatar_url
+                )
+            )
         `
         )
         .eq('id', id)
         .order('created_at', { foreignTable: 'messages', ascending: false })
+        .single();
+}
+
+export async function getMessage(id) {
+    return await client
+        .from('messages')
+        .select(
+            `*,
+            user:profiles(
+                id,
+                username,
+                avatar_url
+            )
+        `
+        )
+        .eq('id', id)
         .single();
 }
 

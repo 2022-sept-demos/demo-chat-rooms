@@ -13,7 +13,31 @@ export function renderRoom(room) {
 export function renderMessage(message) {
     const li = document.createElement('li');
 
-    li.textContent = message.text;
+    const div = document.createElement('div');
+    div.classList.add('info-byline');
+
+    const img = document.createElement('img');
+    img.classList.add('avatar');
+    img.src = message.user.avatar_url;
+    img.alt = message.user.username;
+
+    const userNameSpan = document.createElement('span');
+    userNameSpan.textContent = message.user.username;
+
+    const dateSpan = document.createElement('span');
+    dateSpan.classList.add('created-date');
+    dateSpan.textContent = new Date(message.created_at).toDateString('en-US', {
+        day: 'numeric',
+        month: 'short',
+        year: 'short',
+    });
+
+    const p = document.createElement('p');
+    p.textContent = message.text;
+
+    div.append(img, userNameSpan, dateSpan);
+
+    li.append(div, p);
 
     return li;
 }

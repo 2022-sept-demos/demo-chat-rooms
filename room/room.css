@@ -26,3 +26,13 @@ main {
     padding: 20px 25px;
     border-bottom: 1px solid var(--placeholder-color);
 }
+
+.info-byline {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.created-date {
+    font-size: 0.7em;
+}
