@@ -1,0 +1,28 @@
+main {
+    display: grid;
+    grid-template-rows: auto 2px auto 1fr;
+    gap: 10px;
+}
+
+.room-summary {
+    padding: 5px 20px;
+    background: var(--offset-color);
+    box-shadow: var(--box-shadow);
+}
+
+#add-message-form {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 100px;
+    align-items: end;
+}
+
+#add-message-form input {
+    height: 45px;
+}
+
+#message-list li {
+    background: var(--header-background);
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--placeholder-color);
+}
