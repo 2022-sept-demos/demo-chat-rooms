@@ -48,12 +48,23 @@ export async function createRoom(room) {
     return await client.from('rooms').insert(room);
 }
 
+export async function addFavoriteRoom(roomId) {
+    return await client.from('room_favorites').upsert({ room_id: roomId }).single();
+}
+
+export async function removeFavoriteRoom(roomId) {
+    return await client.from('room_favorites').delete().eq('room_id', roomId).single();
+}
+
 export async function getCategories() {
     return await client.from('categories').select();
 }
 
 export async function getRooms() {
-    return await client.from('rooms').select('*');
+    return await client.from('rooms').select(`
+        *,
+        favorites:room_favorites(user_id)
+    `);
 }
 
 export async function getRoom(id) {

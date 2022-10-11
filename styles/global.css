@@ -59,6 +59,10 @@ body {
     font-size: 0.8em;
 }
 
+nav #username {
+    min-width: 100px;
+}
+
 main {
     padding: 20px;
 }
